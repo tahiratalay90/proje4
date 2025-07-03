@@ -1,0 +1,10 @@
+{
+    "gorunen_alanlar": [
+        "urun_adi",
+        "stok_kodu",
+        "fiyat",
+        "kategori",
+        "marka",
+        "toptanci"
+    ]
+}
