@@ -1,10 +1,10 @@
 
 <?php
 ob_start(); // Çıktı tamponu başlat
-require_once __DIR__ . '/../moduller/db.php';
+require_once __DIR__ . '/../../moduller/db.php';
 $tablo = 'urunler';
 $filtre_ayar_kodu = 'guncelle';
-include __DIR__ . '/../moduller/filtre.php'; // filtre paneli + filtre_where + alanlar
+include __DIR__ . '/../../moduller/filtre.php'; // filtre paneli + filtre_where + alanlar
 
 // SİL
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sil_id'])) {

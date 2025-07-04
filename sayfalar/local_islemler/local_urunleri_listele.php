@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../moduller/db.php';
+require_once __DIR__ . '/../../moduller/db.php';
 $tablo = 'urunler';
-include __DIR__ . '/../moduller/filtre.php'; // Filtre formunu ekler
+include __DIR__ . '/../../moduller/filtre.php'; // Filtre formunu ekler
 
 // Sonra filtrelenmiş sonucu çek
 $sql = "SELECT * FROM $tablo $filtre_where ORDER BY id DESC";

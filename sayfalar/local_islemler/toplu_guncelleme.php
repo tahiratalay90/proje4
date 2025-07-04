@@ -1,10 +1,10 @@
 <?php
 ob_start();
-require_once __DIR__ . '/../moduller/db.php';
+require_once __DIR__ . '/../../moduller/db.php';
 
 $tablo = 'urunler';
 $filtre_ayar_kodu = 'toplu_guncelle';
-include __DIR__ . '/../moduller/filtre.php';
+include __DIR__ . '/../../moduller/filtre.php';
 
 // ✅ TÜM ALANLARI VERİTABANINDAN AL (güncelleme için sadece bunu kullan)
 $alanlar_tumu = [];

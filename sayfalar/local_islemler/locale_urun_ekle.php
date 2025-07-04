@@ -1,6 +1,6 @@
 <?php
 ob_start();
-require_once __DIR__ . '/../moduller/db.php';
+require_once __DIR__ . '/../../moduller/db.php';
 
 $tablo = 'urunler';
 $hata = '';
