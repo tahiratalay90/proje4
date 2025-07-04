@@ -30,8 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
         $url = preg_replace('/([&?])durum=[^&]*/', '', $url);
         $url = rtrim($url, '?&');
         $url .= (strpos($url, '?') === false ? '?' : '&') . 'durum=secili_guncellendi';
-        header("Location: $url");
+        echo "<script>window.location.href='$url';</script>";
         exit;
+
+        
     }
 }
 
@@ -49,8 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
         $url = preg_replace('/([&?])durum=[^&]*/', '', $url);
         $url = rtrim($url, '?&');
         $url .= (strpos($url, '?') === false ? '?' : '&') . 'durum=secili_silindi';
-        header("Location: $url");
+        echo "<script>window.location.href='$url';</script>";
         exit;
+        
     }
 }
 

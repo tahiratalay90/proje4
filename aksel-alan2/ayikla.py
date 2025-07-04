@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import csv
 import re
 
-with open("veri_lasertoner_pantum.html", encoding="utf-8") as f:
+with open("veri_lasertoner_epson.html", encoding="utf-8") as f:
     html = f.read()
 
 soup = BeautifulSoup(html, "html.parser")

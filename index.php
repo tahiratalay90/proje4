@@ -1,5 +1,6 @@
 <?php define('ROOT', __DIR__); ?>
 <?php include 'inc/header.php'; ?>
+
 <?php include 'inc/navbar.php'; ?>
 
 <div class="container" style="max-width:950px; margin:36px auto 28px auto;">

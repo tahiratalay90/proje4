@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <nav class="navbar navbar-expand-lg navbar-custom navbar-dark shadow-sm" style="background:linear-gradient(90deg,#2e8b57 80%,#21ba6b 100%);">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="index.php?sayfa=anasayfa">

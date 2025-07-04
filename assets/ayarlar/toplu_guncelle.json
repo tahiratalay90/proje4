@@ -5,6 +5,8 @@
         "fiyat",
         "kategori",
         "marka",
-        "toptanci"
+        "toptanci",
+        "urun_tipi",
+        "durum"
     ]
 }
