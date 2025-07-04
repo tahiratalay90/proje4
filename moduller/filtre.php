@@ -4,7 +4,7 @@
 if (!isset($tablo)) $tablo = 'urunler';
 
 // Buraya select (dropdown) olacak alanların isimlerini yaz
-$select_alanlar = ['kategori', 'marka', 'toptanci','urun_tipi','durum']; // Örnek alanlar, kendi tablonun alanlarını yazabilirsin
+$select_alanlar = ['kategori', 'marka', 'toptanci','urun_tipi','durum','wooda_varmi']; // Örnek alanlar, kendi tablonun alanlarını yazabilirsin
 
 if (!isset($filtre_ayar_kodu)) {
     $sayfa_adi = basename($_SERVER['SCRIPT_NAME'], '.php'); // örnek: guncelle, urunler

@@ -2,11 +2,12 @@
     "gorunen_alanlar": [
         "urun_adi",
         "stok_kodu",
-        "fiyat",
         "kategori",
+        "fiyat",
         "marka",
         "toptanci",
         "urun_tipi",
-        "durum"
+        "durum",
+        "wooda_varmi"
     ]
 }

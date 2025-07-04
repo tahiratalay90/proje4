@@ -1,12 +1,6 @@
 {
     "gorunen_alanlar": [
-        "id",
         "urun_adi",
-        "stok_kodu",
-        "fiyat",
-        "kategori",
-        "marka",
-        "toptanci",
-        "urun_tipi"
+        "marka"
     ]
 }

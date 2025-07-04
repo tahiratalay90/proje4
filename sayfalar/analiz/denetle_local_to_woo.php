@@ -38,8 +38,9 @@ $tablo = 'urunler';
 if (isset($_POST['kaydet_sonuclar']) && isset($_POST['kontroller'])) {
     $gelenler = json_decode($_POST['kontroller'], true);
     foreach ($gelenler as $id => $varmi) {
-        $stmt = db()->prepare("UPDATE $tablo SET wooda_varmi = :v WHERE id = :id");
-        $stmt->execute([':v' => $varmi, ':id' => $id]);
+        $deger = ($varmi == 1) ? 'var' : 'yok';
+    $stmt = db()->prepare("UPDATE $tablo SET wooda_varmi = :v WHERE id = :id");
+    $stmt->execute([':v' => $deger, ':id' => $id]);
     }
     echo "<div class='alert alert-success'>Başarıyla kaydedildi!</div>";
 }
@@ -92,7 +93,7 @@ if (isset($_POST['denetle'])) {
             <?php foreach($alanlar as $alan): ?>
                 <th><?= htmlspecialchars(str_replace('_', ' ', ucfirst($alan))) ?></th>
             <?php endforeach; ?>
-            <th>İşlem</th>
+            <th>Denetim Sonucu</th>
         </tr>
     </thead>
     <tbody>
