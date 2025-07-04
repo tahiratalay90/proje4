@@ -1,6 +1,14 @@
 {
     "gorunen_alanlar": [
+        "id",
         "urun_adi",
-        "marka"
+        "stok_kodu",
+        "kategori",
+        "fiyat",
+        "marka",
+        "toptanci",
+        "urun_tipi",
+        "durum",
+        "wooda_varmi"
     ]
 }
