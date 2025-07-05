@@ -9,6 +9,8 @@
         "toptanci",
         "urun_tipi",
         "durum",
-        "wooda_varmi"
+        "wooda_varmi",
+        "stok",
+        "kendi_depomuz"
     ]
 }
