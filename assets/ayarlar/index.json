@@ -4,11 +4,11 @@
         "urun_adi",
         "stok_kodu",
         "kategori",
-        "fiyat",
         "marka",
-        "toptanci",
-        "urun_tipi",
-        "durum",
-        "wooda_varmi"
+        "wooda_varmi",
+        "stok",
+        "aciklama",
+        "resim_link",
+        "satis_fiyati"
     ]
 }

@@ -3,12 +3,7 @@
         "id",
         "urun_adi",
         "stok_kodu",
-        "kategori",
-        "fiyat",
-        "marka",
         "toptanci",
-        "urun_tipi",
-        "durum",
-        "wooda_varmi"
+        "resim_link"
     ]
 }

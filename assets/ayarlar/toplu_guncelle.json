@@ -2,15 +2,7 @@
     "gorunen_alanlar": [
         "urun_adi",
         "stok_kodu",
-        "kategori",
-        "fiyat",
-        "marka",
-        "toptanci",
-        "urun_tipi",
-        "durum",
-        "wooda_varmi",
-        "stok",
-        "kendi_depomuz",
-        "muadil_marka"
+        "gelis_fiyat_usd",
+        "satis_fiyati"
     ]
 }
