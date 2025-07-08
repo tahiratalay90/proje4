@@ -3,12 +3,12 @@
         "id",
         "urun_adi",
         "stok_kodu",
-        "kategori",
         "marka",
+        "toptanci",
         "wooda_varmi",
         "stok",
-        "aciklama",
         "resim_link",
-        "satis_fiyati"
+        "satis_fiyati",
+        "orjinal_sku"
     ]
 }

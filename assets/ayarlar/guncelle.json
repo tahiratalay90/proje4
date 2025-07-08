@@ -1,9 +1,7 @@
 {
     "gorunen_alanlar": [
-        "id",
         "urun_adi",
         "stok_kodu",
-        "toptanci",
-        "resim_link"
+        "marka"
     ]
 }

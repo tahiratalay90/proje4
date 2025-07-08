@@ -43,18 +43,19 @@ if (isset($_POST['alan_ayar_guncelle'])) {
 
 $filtre_sql = [];
 $filtre_veri = [];
-foreach($alanlar as $alan) {
+$like_ile_aranacaklar = ['urun_adi'];
+foreach ($alanlar as $alan) {
     if (isset($_GET[$alan]) && $_GET[$alan] !== '') {
-      //direk nokta atışı aranacak alanlar
-    if (in_array($alan, ['stok', 'kendi_depomuz'])) {
-        $filtre_sql[] = "$alan = ?";
-        $filtre_veri[] = (int)$_GET[$alan];
-    } else {
-        $filtre_sql[] = "$alan LIKE ?";
-        $filtre_veri[] = '%' . $_GET[$alan] . '%';
+        if (in_array($alan, $like_ile_aranacaklar)) {
+            $filtre_sql[] = "$alan LIKE ?";
+            $filtre_veri[] = '%' . $_GET[$alan] . '%';
+        } else {
+            $filtre_sql[] = "$alan = ?";
+            $filtre_veri[] = $_GET[$alan];
+        }
     }
 }
-}
+
 $filtre_where = $filtre_sql ? 'WHERE ' . implode(' AND ', $filtre_sql) : '';
 $filtre_acik = count(array_filter($_GET, fn($k)=>in_array($k, $alanlar), ARRAY_FILTER_USE_KEY)) > 0;
 ?>

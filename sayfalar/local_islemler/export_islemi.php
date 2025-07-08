@@ -1,14 +1,15 @@
 <?php
 require_once __DIR__ . '/../../moduller/db.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../moduller/filtre.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // Verileri al
-$sql = "SELECT * FROM urunler ORDER BY id ASC";
+$sql = "SELECT * FROM urunler $filtre_where ORDER BY id ASC";
 $stmt = db()->prepare($sql);
-$stmt->execute();
+$stmt->execute($filtre_veri);
 $urunler = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (!$urunler) {

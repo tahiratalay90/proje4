@@ -3,6 +3,12 @@
         "urun_adi",
         "stok_kodu",
         "gelis_fiyat_usd",
+        "marka",
+        "toptanci",
+        "nitelik_1_ismi",
+        "nitelik_1_degerleri",
+        "nitelik_1_gorunur",
+        "nitelik_1_genel",
         "satis_fiyati"
     ]
 }
