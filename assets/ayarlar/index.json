@@ -3,12 +3,19 @@
         "id",
         "urun_adi",
         "stok_kodu",
+        "kategori",
+        "gelis_fiyat_usd",
         "marka",
         "toptanci",
+        "urun_tipi",
+        "durum",
         "wooda_varmi",
         "stok",
+        "kendi_depomuz",
+        "muadil_marka",
+        "yazici_uyumluluk_listesi",
+        "baski_kapasitesi",
         "resim_link",
-        "satis_fiyati",
-        "orjinal_sku"
+        "satis_fiyati"
     ]
 }

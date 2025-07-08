@@ -5,20 +5,13 @@ error_reporting(E_ALL);
 
 $db = db();
 
-$urunler = $db->query("SELECT id, stok_kodu FROM urunler WHERE marka = 'Xerox-Samsung'")->fetchAll(PDO::FETCH_ASSOC);
-$sayac = 0;
+// Aranacak ve değiştirilecek URL
+$eski_link = "http://hementeknoloji.com.tr/wp-content/uploads/2025/07/Printpen_Standart.jpeg";
+$yeni_link = "http://hementeknoloji.com.tr/wp-content/uploads/2025/07/Printpen_Standart_x1.jpeg";
 
-foreach ($urunler as $urun) {
-    $id = $urun['id'];
-    $sku = $urun['stok_kodu'];
+// Güncelleme sorgusu
+$stmt = $db->prepare("UPDATE urunler SET resim_link = ? WHERE resim_link = ?");
+$stmt->execute([$yeni_link, $eski_link]);
 
-    if (substr($sku, -1) !== '_') {
-        $yeni_sku = $sku . '_';
-
-        $stmt = $db->prepare("UPDATE urunler SET stok_kodu = ? WHERE id = ?");
-        $stmt->execute([$yeni_sku, $id]);
-        $sayac++;
-    }
-}
-
-echo "✅ $sayac adet Canon-Hp ürünü stok_kodu güncellendi.";
+$adet = $stmt->rowCount();
+echo "✅ $adet adet ürünün resmi Xbox_Standart_x1.jpeg olarak güncellendi.";
