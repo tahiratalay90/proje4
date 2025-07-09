@@ -3,13 +3,22 @@ set_time_limit(0);
 require_once __DIR__ . '/../../moduller/db.php';
 
 // --- MODÜLER FİLTRE KULLANIMI ---
-$filtre_ayar_kodu = 'urun_listele'; // ya da ilgili sayfanın kodu, json dosyan olmalı
+$filtre_ayar_kodu = 'urun_listele'; // ya da ilgili sayfanın kodu
 include __DIR__ . '/../../moduller/filtre.php'; // $filtre_where, $filtre_veri, $alanlar oluşur
 
 // --- WOO API ---
 $woo_api = json_decode(file_get_contents(__DIR__ . '/../../ayarlar/wc_api.json'), true);
 
-// --- TOPLU WOO SKU ÇEKME ---
+// --- TEMİZLEYİCİ FUNK ---
+function temiz_sku($sku) {
+    $sku = strtolower($sku);                        // Küçük harfe çevir
+    $sku = trim($sku);                              // Kenar boşluklarını sil
+    $sku = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $sku); // Gizli karakterleri sil
+    $sku = str_replace([" ", "\t", "\n", "\r", "\0", "\x0B"], '', $sku); // Boşluk benzerlerini sil
+    return $sku;
+}
+
+// --- WOO'DAKİ TÜM SKU'LARI AL ---
 function woo_tum_sku_dizisi($api) {
     $sku_set = [];
     $page = 1;
@@ -23,7 +32,10 @@ function woo_tum_sku_dizisi($api) {
         $data = json_decode($response, true);
         if (!empty($data)) {
             foreach ($data as $w) {
-                if (!empty($w['sku'])) $sku_set[trim(strtolower($w['sku']))] = true;
+                if (!empty($w['sku'])) {
+                    $temiz = temiz_sku($w['sku']);
+                    $sku_set[$temiz] = true;
+                }
             }
             $page++;
         } else {
@@ -33,40 +45,44 @@ function woo_tum_sku_dizisi($api) {
     return $sku_set;
 }
 
+// --- VERİTABANI ÜRÜNLERİ ---
 $tablo = 'urunler';
-
-// --- KAYDETME ---
-if (isset($_POST['kaydet_sonuclar']) && isset($_POST['kontroller'])) {
-    $gelenler = json_decode($_POST['kontroller'], true);
-    foreach ($gelenler as $id => $varmi) {
-        $deger = ($varmi == 1) ? 'var' : 'yok';
-    $stmt = db()->prepare("UPDATE $tablo SET wooda_varmi = :v WHERE id = :id");
-    $stmt->execute([':v' => $deger, ':id' => $id]);
-    }
-    echo "<div class='alert alert-success'>Başarıyla kaydedildi!</div>";
-}
-
-// --- ÜRÜNLERİ ÇEK ---
 $sql = "SELECT * FROM $tablo $filtre_where ORDER BY id DESC";
 $stmt = db()->prepare($sql);
 $stmt->execute($filtre_veri);
 $urunler = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $toplam = count($urunler);
 
-// --- DENETLE ---
+// --- KAYDETME ---
+if (isset($_POST['kaydet_sonuclar']) && isset($_POST['kontroller'])) {
+    $gelenler = json_decode($_POST['kontroller'], true);
+    foreach ($gelenler as $id => $varmi) {
+        $deger = ($varmi == 1) ? 'var' : 'yok';
+        $stmt = db()->prepare("UPDATE $tablo SET wooda_varmi = :v WHERE id = :id");
+        $stmt->execute([':v' => $deger, ':id' => $id]);
+    }
+    echo "<div class='alert alert-success'>Başarıyla kaydedildi!</div>";
+}
+
+// --- DENETLEME İŞLEMİ ---
 $kontroller = [];
 if (isset($_POST['denetle'])) {
     $woo_sku_set = woo_tum_sku_dizisi($woo_api);
     foreach ($urunler as $row) {
-        $sku = trim(strtolower($row['stok_kodu'] ?? ''));
+        $sku = temiz_sku($row['stok_kodu'] ?? '');
         $kontroller[$row['id']] = isset($woo_sku_set[$sku]) ? 1 : 0;
+
+        // Hata ayıklama için log (isteğe bağlı)
+        /*
+        if (!isset($woo_sku_set[$sku])) {
+            error_log("Bulunamadı: SKU = [$sku] | ID = {$row['id']}");
+        }
+        */
     }
 }
 ?>
 
-<!-- FİLTRE FORMU BURADA GELİR -->
-
-
+<!-- FİLTRE FORMU -->
 <h3>Ürün Listesi <small class="text-muted">(<?= $toplam ?> adet)</small></h3>
 
 <form method="post">
@@ -107,13 +123,8 @@ if (isset($_POST['denetle'])) {
                 echo "<td>" . htmlspecialchars($row[$alan]) . "</td>";
             }
             echo "<td class='text-center'>";
-            if (isset($kontroller[$row['id']])) {
-                echo $kontroller[$row['id']] ? "1" : "0";
-            } else {
-                echo "-";
-            }
-            echo "</td>";
-            echo "</tr>";
+            echo isset($kontroller[$row['id']]) ? $kontroller[$row['id']] : "-";
+            echo "</td></tr>";
         }
     } else {
         echo "<tr><td colspan='".(count($alanlar)+2)."'><em>Henüz ürün yok.</em></td></tr>";
@@ -121,3 +132,22 @@ if (isset($_POST['denetle'])) {
     ?>
     </tbody>
 </table>
+<?php
+
+if (isset($_POST['denetle'])) {
+    $woo_sku_set = woo_tum_sku_dizisi($woo_api);
+    foreach ($urunler as $row) {
+        $orj_sku = $row['stok_kodu'] ?? '';
+        $sku = temiz_sku($orj_sku);
+        $kontroller[$row['id']] = isset($woo_sku_set[$sku]) ? 1 : 0;
+
+        if (!isset($woo_sku_set[$sku])) {
+            // Gerçek farkı göster
+            foreach ($woo_sku_set as $ws => $v) {
+                if (levenshtein($sku, $ws) <= 2) { // neredeyse eşit olanları yazdır
+                    error_log("❌ BULUNAMADI: DB SKU = [$sku] | ORJ = [$orj_sku] | Woo Benzeri = [$ws]");
+                }
+            }
+        }
+    }
+}
