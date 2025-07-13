@@ -1,90 +1,23 @@
 <?php
-require_once 'moduller/db.php';
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+$db = new PDO('sqlite:urunler.db');
 
-// SEO dönüştürme fonksiyonu
-function seoYap($metin) {
-    $turkce = ['ç','ğ','ı','ö','ş','ü','Ç','Ğ','İ','Ö','Ş','Ü'];
-    $duzgun = ['c','g','i','o','s','u','c','g','i','o','s','u'];
-    $metin = str_replace($turkce, $duzgun, $metin);
-    $metin = strtolower($metin);
+// Tüm ürünleri çek
+$urunler = $db->query("SELECT id, urun_adi FROM urunler")->fetchAll(PDO::FETCH_ASSOC);
 
-    // 🔧 virgül ve & gibi özel ayraçları tireye çevir
-    $metin = str_replace([',', '&', '/', '+'], '-', $metin);
+foreach ($urunler as $u) {
+    $aciklama = <<<EOT
+<h1>{$u['urun_adi']}</h1>
+<b>Kesintisiz ve Yüksek Performanslı Baskı Deneyimi</b><br>
+{$u['urun_adi']}, ofisinizin ve evinizin tüm baskı ihtiyaçlarında maksimum verimlilik sağlar. Orijinal kaliteyle yarışan bu toner sayesinde her baskınızda net ve keskin sonuçlar elde edersiniz. Uzun ömürlü yapısı ve istikrarlı performansı ile belgelerinizde mükemmel netlik sunar. Yazıcı dostu formülü sayesinde yazıcınızda sorunsuz çalışır ve kartuş değişim sürecini zahmetsiz kılar.<br><br>
+<b>Ekonomik Çözümlerle Yüksek Tasarruf</b><br>
+Yüksek baskı kapasitesine sahip {$u['urun_adi']}, sayfa başı maliyetlerinizi önemli ölçüde azaltır. Kaliteden ödün vermeden daha fazla baskı yapabilir, bütçenizi verimli kullanabilirsiniz. Özellikle yoğun baskı gereksinimi olan iş yerleri için ideal olan bu toner, uzun vadede önemli bir tasarruf sağlar. Ekonomik fiyatı ve yüksek verimiyle hem cebinizi hem de işinizi korur.<br><br>
+<b>Çevre Dostu ve Güvenilir Seçim</b><br>
+Çevre bilinciyle üretilmiş {$u['urun_adi']}, doğaya duyarlı yapısıyla sürdürülebilir bir tercih sunar. Yeniden doldurulabilir ve geri dönüştürülebilir özellikleriyle çevre dostu çözümler üretir. Tüm kalite testlerinden geçmiş, %100 uyumlu ve güvenilir yapısıyla baskı işlerinizde daima yanınızda!
+EOT;
 
-    // alfasayısal, boşluk ve tire dışındaki her şeyi kaldır
-    $metin = preg_replace('/[^a-z0-9\s-]/', '', $metin);
-    $metin = preg_replace('/[\s]+/', '-', $metin);
-    return trim($metin, '-');
+    $stmt = $db->prepare("UPDATE urunler SET aciklama1 = ? WHERE id = ?");
+    $stmt->execute([$aciklama, $u['id']]);
 }
 
-// Klasör yolları
-$kaynak_klasor = __DIR__ . '/assets/resimler2/';
-$hedef_klasor  = __DIR__ . '/assets/resimler3/';
-$url_base = "http://hementeknoloji.com.tr/wp-content/uploads/2025/07/";
-
-// Hedef klasör yoksa oluştur
-if (!is_dir($hedef_klasor)) {
-    mkdir($hedef_klasor, 0777, true);
-}
-if (!is_writable($hedef_klasor)) {
-    die("❌ HATA: $hedef_klasor klasörü yazılamıyor. CHMOD 777 yap.");
-}
-
-$db = db();
-$urunler = $db->query("SELECT id, stok_kodu, urun_adi FROM urunler")->fetchAll(PDO::FETCH_ASSOC);
-$sayac = 0;
-
-foreach ($urunler as $urun) {
-    $id = $urun['id'];
-    $sku = $urun['stok_kodu'];
-    $adi = $urun['urun_adi'];
-
-    $bulundu = false;
-    $uzanti = null;
-    $orijinal_yol = null;
-
-    // .jpg ve .jpeg dosyaları büyük/küçük harf duyarsız kontrol
-    foreach (['jpg', 'jpeg', 'JPG', 'JPEG'] as $ext) {
-        $yol = $kaynak_klasor . $sku . '.' . $ext;
-        if (file_exists($yol)) {
-            $bulundu = true;
-            $uzanti = strtolower($ext); // hedefte küçük harf olarak kaydedeceğiz
-            $orijinal_yol = $yol;
-            break;
-        }
-    }
-
-    if ($bulundu) {
-        $seo_ad = seoYap($adi);
-        $yeni_dosya = $seo_ad . '.' . $uzanti;
-        $yeni_yol = $hedef_klasor . $yeni_dosya;
-
-        if (!file_exists($yeni_yol)) {
-            if (!copy($orijinal_yol, $yeni_yol)) {
-                echo "❌ Kopyalanamadı: $orijinal_yol → $yeni_yol<br>";
-                continue;
-            } else {
-                echo "✅ Kopyalandı: $orijinal_yol → $yeni_yol<br>";
-            }
-        } else {
-            echo "ℹ️ Zaten var: $yeni_dosya<br>";
-        }
-
-        $resim_link = $url_base . $yeni_dosya;
-    } elseif (stripos($adi, 'xbox') !== false) {
-        $resim_link = $url_base . 'Xbox_Standart.jpeg';
-        echo "⚠️ Eşleşme yok, XBox geçiyor: $adi → Xbox_Standart.jpeg<br>";
-    } else {
-        $resim_link = $url_base . 'Printpen_Standart.jpeg';
-        echo "⚠️ Eşleşme yok, XBox geçmiyor: $adi → Printpen_Standart.jpeg<br>";
-    }
-
-    // Veritabanına yaz
-    $stmt = $db->prepare("UPDATE urunler SET resim_link = ? WHERE id = ?");
-    $stmt->execute([$resim_link, $id]);
-    $sayac++;
-}
-
-echo "<hr>✅ Toplam $sayac ürün işlendi ve resim_link alanı güncellendi.";
+echo "Tüm ürünlerde aciklama1 alanı H1 ve bold başlıklarla güncellendi!";
+?>

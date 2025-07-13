@@ -5,6 +5,7 @@
         "stok_kodu",
         "marka",
         "wooda_varmi",
-        "satis_fiyati"
+        "satis_fiyati",
+        "aciklama1"
     ]
 }
