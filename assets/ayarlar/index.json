@@ -4,8 +4,6 @@
         "urun_adi",
         "stok_kodu",
         "marka",
-        "wooda_varmi",
-        "satis_fiyati",
-        "aciklama1"
+        "baski_kapasitesi"
     ]
 }
