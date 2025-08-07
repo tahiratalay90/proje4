@@ -1,9 +1,0 @@
-{
-    "gorunen_alanlar": [
-        "id",
-        "urun_adi",
-        "stok_kodu",
-        "marka",
-        "baski_kapasitesi"
-    ]
-}
